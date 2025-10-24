@@ -1,0 +1,28 @@
+# Derived and heavy artifacts
+runs/
+**/runs/
+ocr_sweeps/
+**/.cache/
+**/*.cache
+
+dataset_new/yolo_iter/
+
+# Checkpoints / weights / compiled models
+**/*.pt
+**/*.onnx
+**/*.engine
+**/*.tflite
+
+# Python/Notebook noise
+**/.ipynb_checkpoints/
+**/__pycache__/
+**/*.pyc
+
+# Environments
+venv/
+.venv/
+**/venv/
+**/.venv/
+
+# OS files
+.DS_Store
