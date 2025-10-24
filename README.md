@@ -15,7 +15,7 @@
 ### Структура папки 🗂️
 
 - data/ — place source PDFs here (subfolders allowed)
-- dataset_new/
+- dataset/
   - images/ — rendered pages for annotated samples
   - viz/ — previews with bounding boxes for QA
   - annotations.json — labels with metadata
@@ -98,9 +98,9 @@ git push
 4. Draw boxes (left-drag), choose Class, optionally use "Propose+Add".
 5. Press "Save".
 6. The tool writes (repo-relative paths):
-   - `dataset_new/images/<Dir>__<Pdf>__p<idx>.png`
-   - `dataset_new/viz/<same>.png` (colored boxes + labels)
-   - `dataset_new/annotations.json` with fields:
+   - `dataset/images/<Dir>__<Pdf>__p<idx>.png`
+   - `dataset/viz/<same>.png` (colored boxes + labels)
+   - `dataset/annotations.json` with fields:
      - `image`, `width`, `height`, `source_pdf`, `page_idx`, `annotations[{bbox, category_id}]`
 
 ### Owner workflow (training)
