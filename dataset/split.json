@@ -1,0 +1,18 @@
+{
+  "train": [
+    "Lectures.pdf__p8.png",
+    "Lectures.pdf__p3.png",
+    "Lectures.pdf__p2.png",
+    "Lectures.pdf__p20.png",
+    "Lectures.pdf__p12.png",
+    "Lectures.pdf__p6.png",
+    "Lectures.pdf__p21.png",
+    "Lectures.pdf__p7.png"
+  ],
+  "val": [
+    "Lectures.pdf__p0.png"
+  ],
+  "test": [
+    "Lectures.pdf__p5.png"
+  ]
+}
