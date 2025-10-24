@@ -1,12 +1,23 @@
-GoodNotes-AI (study_kb)
+# GoodNotes-AI (study_kb) ✨
 
-This folder can serve as a standalone repository for layout annotation and training.
+Стэндэлон-папка для разметки макета страниц и обучения YOLO.
 
-Structure
+## Содержание
+
+- [Структура папки 🗂️](#структура-папки-️)
+- [Требования 📦](#требования-)
+- [Быстрый старт для коллеги 🚀](#быстрый-старт-для-коллеги-)
+- [Настройка в VS Code / Cursor 🧰](#настройка-в-vs-code--cursor-)
+- [Процесс разметки ✍️](#annotator-workflow-details)
+- [Обучение (owner) 🧪](#owner-workflow-training)
+- [Заметки 🧠](#notes)
+
+### Структура папки 🗂️
+
 - data/ — place source PDFs here (subfolders allowed)
 - dataset_new/
   - images/ — rendered pages for annotated samples
-  - viz/ — rendered previews with drawn bounding boxes for QA
+  - viz/ — previews with bounding boxes for QA
   - annotations.json — labels with metadata
   - yolo_iter/ — auto-generated YOLO export (ignored in git)
 - markup.ipynb — interactive annotation tool
@@ -14,37 +25,92 @@ Structure
 - MARKUP_INSTRUCTION.md — labeling guide
 - requirements.txt — dependencies
 
-Setup
-- Install: pip install -r requirements.txt
-- Enable Git LFS: git lfs install (PDFs tracked via .gitattributes)
+### Требования 📦
 
-Annotator workflow (for collaborators)
-1) Get the repo
-   - git clone <repo-url>
-   - cd study_kb
-   - pip install -r requirements.txt
-2) Add PDFs to annotate
-   - Put files into data/ (you may organize subfolders)
-   - git lfs track "*.pdf" is already configured
-3) Annotate
-   - Open markup.ipynb
-   - Use “Next ✨” to jump to the next unannotated page
-   - Draw boxes (left mouse drag), pick class, Save
-   - The tool saves:
-     - dataset_new/images/<Dir>__<Pdf>__p<idx>.png
-     - dataset_new/viz/<same>.png (overlays for QA)
-     - dataset_new/annotations.json (appends/updates record with source_pdf, page_idx, annotator)
-4) Commit and push your annotations
-   - git add dataset_new/images dataset_new/viz dataset_new/annotations.json data
-   - git commit -m "annot: +N pages (your_name)"
-   - git push
+Tested with Python 3.10+.
 
-Owner workflow (training)
-- Open iterative_learning.ipynb
-- Export YOLO, train, evaluate
-- Runs/logs are ignored from git (kept local)
+Runtime deps for `markup.ipynb` are present in `requirements.txt`:
 
-Notes
-- Document-level split prevents leakage across pages of the same PDF
-- Unique image names: <Dir>__<Pdf>__p<idx>.png
-- See MARKUP_INSTRUCTION.md for the 6-class taxonomy and edge cases
+- PyMuPDF (`pymupdf`), OpenCV (`opencv-python-headless`), Pillow, numpy, matplotlib
+- Jupyter + widgets: `notebook`, `ipykernel`, `ipython`, `ipywidgets`, `ipympl`
+- Training/extra: `ultralytics`, `torch`, `torchvision`, `pycocotools`, etc.
+
+Enable Git LFS once on your machine:
+
+- `git lfs install` (PDFs are tracked via `.gitattributes`)
+
+### Быстрый старт для коллеги 🚀
+
+```bash
+# 1) Get the repo and create a venv
+git clone <repo-url>
+cd study_kb
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+
+# 2) Install deps
+pip install -r requirements.txt
+
+# 3) Add PDFs to annotate (subfolders allowed)
+mkdir -p data
+# put your PDFs into data/
+
+# 4) Start annotating
+jupyter notebook markup.ipynb  # or open the notebook in VS Code
+# In the UI: Rescan PDFs -> pick PDF -> set Page -> Load -> draw -> Save
+
+# 5) Commit and push your annotations
+git add dataset_new/images dataset_new/viz dataset_new/annotations.json data
+git commit -m "annot: +N pages (<name>)"
+git push
+```
+
+### Настройка в VS Code / Cursor 🧰
+
+1. Установите расширения (если ещё не стоят):
+   - Python (Microsoft)
+   - Jupyter (Microsoft)
+2. Откройте папку `study_kb` в VS Code или Cursor (File → Open Folder...).
+3. Создайте и активируйте виртуальное окружение, установите зависимости:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # Windows: .venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+4. Выберите интерпретатор Python в VS Code/Cursor:
+   - Команда: “Python: Select Interpreter” → выберите `.venv`.
+5. Поставьте ядро Jupyter для этого окружения (на всякий случай):
+   ```bash
+   python -m ipykernel install --user --name study_kb
+   ```
+6. Откройте `markup.ipynb`:
+   - В правом верхнем углу ноутбука выберите Kernel → `study_kb` (или интерпретатор из `.venv`).
+   - Убедитесь, что верхняя ячейка содержит `%matplotlib widget` (для интерактивного canvas) — уже добавлено.
+7. Если виджеты не отображаются:
+   - Проверьте, что установлены `ipywidgets` и `ipympl` (ставятся из `requirements.txt`).
+   - Перезапустите Kernel (Kernel → Restart Kernel) и выполните все ячейки заново.
+
+### Annotator workflow (details)
+
+1. Open `markup.ipynb`.
+2. Click "Rescan PDFs" if you just added files into `data/`.
+3. Select a PDF, set page index, press "Load".
+4. Draw boxes (left-drag), choose Class, optionally use "Propose+Add".
+5. Press "Save".
+6. The tool writes (repo-relative paths):
+   - `dataset_new/images/<Dir>__<Pdf>__p<idx>.png`
+   - `dataset_new/viz/<same>.png` (colored boxes + labels)
+   - `dataset_new/annotations.json` with fields:
+     - `image`, `width`, `height`, `source_pdf`, `page_idx`, `annotations[{bbox, category_id}]`
+
+### Owner workflow (training)
+
+1. Open `iterative_learning.ipynb`.
+2. Export YOLO, train, evaluate.
+3. Runs/logs remain local (ignored by git).
+
+### Notes
+
+- Document-level split prevents leakage across pages of the same PDF.
+- Unique image names: `<Dir>__<Pdf>__p<idx>.png`.
+- See `MARKUP_INSTRUCTION.md` for the 6-class taxonomy and edge cases.
